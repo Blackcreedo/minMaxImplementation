@@ -1,5 +1,6 @@
 package fr.emse.ai.search.simple;
 
+import fr.emse.ai.search.core.AlphaBetaSearch;
 import fr.emse.ai.search.core.MiniMaxSearch;
 import fr.emse.ai.search.core.SimpleTwoPlyGameTree;
 
@@ -33,5 +34,7 @@ public class Tree {
         System.out.println(tree1.toString());
         System.out.println(MiniMaxSearch.maxValue(tree1));
         System.out.println(MiniMaxSearch.minValue(tree1));
+        System.out.println(AlphaBetaSearch.maxValue(tree1, 0, 0));
+        System.out.println(AlphaBetaSearch.minValue(tree1, 0, 0));
     }
 }

@@ -1,9 +1,10 @@
-package fr.emse.ai.search.core;
+package fr.emse.ai.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleTwoPlyGameTree<V> {
+
     private V value;
     private boolean max;
     private ArrayList<SimpleTwoPlyGameTree<V>> children;

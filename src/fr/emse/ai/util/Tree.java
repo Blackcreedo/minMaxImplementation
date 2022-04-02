@@ -1,8 +1,5 @@
-package fr.emse.ai.search.simple;
+package fr.emse.ai.util;
 
-import fr.emse.ai.search.core.AlphaBetaSearch;
-import fr.emse.ai.search.core.MiniMaxSearch;
-import fr.emse.ai.search.core.SimpleTwoPlyGameTree;
 
 import java.util.ArrayList;
 

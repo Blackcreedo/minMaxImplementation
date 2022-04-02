@@ -1,4 +1,4 @@
-package fr.emse.ai.search.core;
+package fr.emse.ai.util;
 
 import java.util.ArrayList;
 

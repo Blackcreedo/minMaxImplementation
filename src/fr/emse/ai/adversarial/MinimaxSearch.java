@@ -64,7 +64,6 @@ public class MinimaxSearch<STATE, ACTION, PLAYER> implements
 	public ACTION makeDecision(STATE state, boolean ismax) {
 		expandedNodes = 0;
 		ACTION result = null;
-
 		PLAYER player = game.getPlayer(state);
 		if(ismax){
 			double resultValue = Double.NEGATIVE_INFINITY;

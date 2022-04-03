@@ -2,6 +2,7 @@ package fr.emse.ai.adversarial.ttt;
 
 import fr.emse.ai.adversarial.AlphaBetaSearch;
 import fr.emse.ai.adversarial.MinimaxSearch;
+import fr.emse.ai.adversarial.IterativeDeepeningAlphaBetaSearch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public class TttGamePlay {
         TttGame game = new TttGame();
         MinimaxSearch<List<List<Integer>>, List<Integer>, Integer> minimaxSearch = MinimaxSearch.createFor(game);
         AlphaBetaSearch<List<List<Integer>>, List<Integer>, Integer> alphabetaSearch = AlphaBetaSearch.createFor(game);
+        IterativeDeepeningAlphaBetaSearch<List<List<Integer>>, List<Integer>, Integer> iterativeDeepeningAlphaBetaSearch = IterativeDeepeningAlphaBetaSearch.createFor(game, -1, 1, 10);
         List<List<Integer>> state = game.getInitialState();
         System.out.println("Who do you want to play X (first player) or O (second player)");
         int playerChosen = 0;
@@ -41,9 +43,14 @@ public class TttGamePlay {
             }
             else{
                 // machine turn
+                boolean ismax = playerChosen==0;  // replace playerChosen==0 by !playerChosen==0 if you want the AI to lose everytime
                 System.out.println("Machine player, what is your action?");
-                action = minimaxSearch.makeDecision(state, playerChosen==0);
+                minimaxSearch.makeDecision(state, ismax);
                 System.out.println("Metrics for Minimax : " + minimaxSearch.getMetrics());
+                alphabetaSearch.makeDecision(state, ismax);
+                System.out.println("Metrics for AlphaBeta : " + alphabetaSearch.getMetrics());
+                action = iterativeDeepeningAlphaBetaSearch.makeDecision(state, ismax);
+                System.out.println("Metrics for IDAlphaBetaSearch : " + iterativeDeepeningAlphaBetaSearch.getMetrics());
             }
             System.out.println("Chosen action is " + action);
             state = game.getResult(state, action);
@@ -52,7 +59,7 @@ public class TttGamePlay {
         System.out.print("GAME OVER: ");
         if (game.winner(state)==null)
             System.out.println("Draw :)");
-        else if (game.winner(state) == 0)
+        else if (game.winner(state) == playerChosen)
             System.out.println("Human wins!");
         else
             System.out.println("Machine wins!");

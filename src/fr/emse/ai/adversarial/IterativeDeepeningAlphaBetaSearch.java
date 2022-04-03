@@ -60,7 +60,6 @@ public class IterativeDeepeningAlphaBetaSearch<STATE, ACTION, PLAYER>
 	@Override
 	public ACTION makeDecision(STATE state, boolean ismax) {
 		List<ACTION> results = null;
-		double resultValue = Double.NEGATIVE_INFINITY;
 		PLAYER player = game.getPlayer(state);
 		StringBuffer logText = null;
 		expandedNodes = 0;
@@ -68,46 +67,91 @@ public class IterativeDeepeningAlphaBetaSearch<STATE, ACTION, PLAYER>
 		currDepthLimit = 0;
 		long startTime = System.currentTimeMillis();
 		boolean exit = false;
-		do {
-			incrementDepthLimit();
-			maxDepthReached = false;
-			List<ACTION> newResults = new ArrayList<ACTION>();
-			double newResultValue = Double.NEGATIVE_INFINITY;
-			double secondBestValue = Double.NEGATIVE_INFINITY;
-			if (logEnabled)
-				logText = new StringBuffer("depth " + currDepthLimit + ": ");
-			for (ACTION action : orderActions(state, game.getActions(state),
-					player, 0)) {
-				if (results != null
-						&& System.currentTimeMillis() > startTime + maxTime) {
-					exit = true;
-					break;
-				}
-				double value = minValue(game.getResult(state, action), player,
-						Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
+		if(ismax){
+			double resultValue = Double.NEGATIVE_INFINITY;
+			do {
+				incrementDepthLimit();
+				maxDepthReached = false;
+				List<ACTION> newResults = new ArrayList<ACTION>();
+				double newResultValue = Double.NEGATIVE_INFINITY;
+				double secondBestValue = Double.NEGATIVE_INFINITY;
 				if (logEnabled)
-					logText.append(action + "->" + value + " ");
-				if (value >= newResultValue) {
-					if (value > newResultValue) {
-						secondBestValue = newResultValue;
-						newResultValue = value;
-						newResults.clear();
+					logText = new StringBuffer("depth " + currDepthLimit + ": ");
+				for (ACTION action : orderActions(state, game.getActions(state),
+						player, 0)) {
+					if (results != null
+							&& System.currentTimeMillis() > startTime + maxTime) {
+						exit = true;
+						break;
 					}
-					newResults.add(action);
-				} else if (value > secondBestValue) {
-					secondBestValue = value;
+					double value = minValue(game.getResult(state, action), player,
+							Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
+					if (logEnabled)
+						logText.append(action + "->" + value + " ");
+					if (value >= newResultValue) {
+						if (value > newResultValue) {
+							secondBestValue = newResultValue;
+							newResultValue = value;
+							newResults.clear();
+						}
+						newResults.add(action);
+					} else if (value > secondBestValue) {
+						secondBestValue = value;
+					}
 				}
-			}
-			if (logEnabled)
-				System.out.println(logText);
-			if (!exit || isSignificantlyBetter(newResultValue, resultValue)) {
-				results = newResults;
-				resultValue = newResultValue;
-			}
-			if (!exit && results.size() == 1
-					&& this.isSignificantlyBetter(resultValue, secondBestValue))
-				break;
-		} while (!exit && maxDepthReached && !hasSafeWinner(resultValue));
+				if (logEnabled)
+					System.out.println(logText);
+				if (!exit || isSignificantlyBetter(newResultValue, resultValue)) {
+					results = newResults;
+					resultValue = newResultValue;
+				}
+				if (!exit && results.size() == 1
+						&& this.isSignificantlyBetter(resultValue, secondBestValue))
+					break;
+			} while (!exit && maxDepthReached && !hasSafeWinner(resultValue));
+		} else {
+			double resultValue = Double.POSITIVE_INFINITY;
+			do {
+				incrementDepthLimit();
+				maxDepthReached = false;
+				List<ACTION> newResults = new ArrayList<ACTION>();
+				double newResultValue = Double.POSITIVE_INFINITY;
+				double secondBestValue = Double.POSITIVE_INFINITY;
+				if (logEnabled)
+					logText = new StringBuffer("depth " + currDepthLimit + ": ");
+				for (ACTION action : orderActions(state, game.getActions(state),
+						player, 0)) {
+					if (results != null
+							&& System.currentTimeMillis() > startTime + maxTime) {
+						exit = true;
+						break;
+					}
+					double value = maxValue(game.getResult(state, action), player,
+							Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
+					if (logEnabled)
+						logText.append(action + "->" + value + " ");
+					if (value <= newResultValue) {
+						if (value < newResultValue) {
+							secondBestValue = newResultValue;
+							newResultValue = value;
+							newResults.clear();
+						}
+						newResults.add(action);
+					} else if (value < secondBestValue) {
+						secondBestValue = value;
+					}
+				}
+				if (logEnabled)
+					System.out.println(logText);
+				if (!exit || isSignificantlyBetter(newResultValue, resultValue)) {
+					results = newResults;
+					resultValue = newResultValue;
+				}
+				if (!exit && results.size() == 1
+						&& this.isSignificantlyBetter(resultValue, secondBestValue))
+					break;
+			} while (!exit && maxDepthReached && !hasSafeWinner(resultValue));
+		}
 		return results.get(0);
 	}
 

@@ -12,7 +12,7 @@ import fr.emse.ai.adversarial.core.Metrics;
 public interface AdversarialSearch<STATE, ACTION> {
 
 	/** Returns the action which appears to be the best at the given state. */
-	ACTION makeDecision(STATE state);
+	ACTION makeDecision(STATE state, boolean ismax);
 
 	/**
 	 * Returns all the metrics of the search.

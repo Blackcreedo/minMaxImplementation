@@ -58,7 +58,7 @@ public class IterativeDeepeningAlphaBetaSearch<STATE, ACTION, PLAYER>
 	 * Template method controlling the search.
 	 */
 	@Override
-	public ACTION makeDecision(STATE state) {
+	public ACTION makeDecision(STATE state, boolean ismax) {
 		List<ACTION> results = null;
 		double resultValue = Double.NEGATIVE_INFINITY;
 		PLAYER player = game.getPlayer(state);

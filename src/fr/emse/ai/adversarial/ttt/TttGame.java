@@ -39,7 +39,7 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
         for (int i =0; i<3;i++){
             for (int j =0; j<3;j++){
                 if(state.get(i).get(j)==1) Xcount++;
-                else Ocount++;
+                if(state.get(i).get(j)==0) Ocount++;
             }
         }
         if (Xcount>Ocount) return 0; // O player turn
@@ -66,20 +66,32 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
     public List<List<Integer>> getResult(List<List<Integer>> state, List<Integer> action) {
         // Returns the board that results from making move (i, j) on the board.
         int player = getPlayer(state);
-        ArrayList<Integer> line = (ArrayList)state.get(action.get(0));
+
+        // make a copy of the list
+        ArrayList<List<Integer>> newState = new ArrayList<List<Integer>>();
+        for (int i =0; i<3;i++){
+            ArrayList<Integer> lineNew = new ArrayList<Integer>();
+            ArrayList<Integer> lineOld = (ArrayList)state.get(i);
+            for(int e: lineOld){
+                lineNew.add(e);
+            }
+            newState.add(lineNew);
+        }
+
+        ArrayList<Integer> line = (ArrayList)newState.get(action.get(0));
         line.set(action.get(1), player);
-        state.set(action.get(0), line);
-        return state;
+        newState.set(action.get(0), line);
+        return newState;
     }
 
-    private Integer winner(List<List<Integer>> state){
+    public Integer winner(List<List<Integer>> state){
         // return the winner of the game
         for (int i =0; i<3;i++) {
-            if(state.get(i).get(0)==state.get(i).get(1) && state.get(i).get(0)==state.get(i).get(2)) return  state.get(i).get(0); // win with a line
-            if(state.get(0).get(i)==state.get(1).get(i) && state.get(0).get(i)==state.get(2).get(i)) return  state.get(0).get(i); // win with a column
+            if(state.get(i).get(0)==state.get(i).get(1) && state.get(i).get(0)==state.get(i).get(2) && state.get(i).get(0)!= -1) return  state.get(i).get(0); // win with a line
+            if(state.get(0).get(i)==state.get(1).get(i) && state.get(0).get(i)==state.get(2).get(i) && state.get(0).get(i)!= -1) return  state.get(0).get(i); // win with a column
         }
-        if (state.get(0).get(0)==state.get(1).get(1) && state.get(0).get(0)==state.get(2).get(2)) return state.get(1).get(1); // win with diagonal
-        if (state.get(0).get(2)==state.get(1).get(1) && state.get(0).get(0)==state.get(2).get(0)) return state.get(1).get(1); // win with the other diagonal
+        if (state.get(0).get(0)==state.get(1).get(1) && state.get(0).get(0)==state.get(2).get(2) && state.get(1).get(1)!= -1) return state.get(1).get(1); // win with diagonal
+        if (state.get(0).get(2)==state.get(1).get(1) && state.get(0).get(2)==state.get(2).get(0) && state.get(1).get(1)!= -1) return state.get(1).get(1); // win with the other diagonal
         return null;
     }
 
@@ -87,6 +99,7 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
     public boolean isTerminal(List<List<Integer>> state) {
         // Returns True if game is over, False otherwise.
         if (winner(state)!=null) return true;
+        List<List<Integer>> actions = getActions(state);
         if (getActions(state).size() == 0) return true;
         return false;
     }
@@ -95,8 +108,21 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
     public double getUtility(List<List<Integer>> state, Integer player) {
         // Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
         player = winner(state);
+        if (player==null) return 0;
         if (player == 1) return 1;
-        if (player == 0) return -1;
-        return 0;
+        return -1;
+    }
+
+    public void printState(List<List<Integer>> state){
+        for(int i=0;i<3;i++){
+            System.out.print("|");
+            ArrayList<Integer> lineI = (ArrayList)state.get(i);
+            for (Integer e: lineI){
+                if(e==1) System.out.print("X|");
+                else if(e==0) System.out.print("O|");
+                else System.out.print(" |");
+            }
+            System.out.println("\n---------");
+        }
     }
 }

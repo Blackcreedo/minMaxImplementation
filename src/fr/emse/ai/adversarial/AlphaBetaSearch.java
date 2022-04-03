@@ -62,7 +62,7 @@ public class AlphaBetaSearch<STATE, ACTION, PLAYER> implements
 	}
 
 	@Override
-	public ACTION makeDecision(STATE state) {
+	public ACTION makeDecision(STATE state, boolean ismax) {
 		expandedNodes = 0;
 		ACTION result = null;
 		double resultValue = Double.NEGATIVE_INFINITY;

@@ -30,11 +30,11 @@ public class NimGameplay {
             } else {
                 //machine
                 System.out.println("Machine player, what is your action?");
-                action = minimaxSearch.makeDecision(state);
+                action = minimaxSearch.makeDecision(state, true);
                 System.out.println("Metrics for Minimax : " + minimaxSearch.getMetrics());
-                alphabetaSearch.makeDecision(state);
+                alphabetaSearch.makeDecision(state, true);
                 System.out.println("Metrics for AlphaBeta : " + alphabetaSearch.getMetrics());
-                iterativeDeepeningAlphaBetaSearch.makeDecision(state);
+                iterativeDeepeningAlphaBetaSearch.makeDecision(state, true);
                 System.out.println("Metrics for IDAlphaBetaSearch : " + iterativeDeepeningAlphaBetaSearch.getMetrics());
             }
             System.out.println("Chosen action is " + action);

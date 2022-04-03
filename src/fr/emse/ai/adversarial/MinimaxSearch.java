@@ -61,16 +61,28 @@ public class MinimaxSearch<STATE, ACTION, PLAYER> implements
 	}
 
 	@Override
-	public ACTION makeDecision(STATE state) {
+	public ACTION makeDecision(STATE state, boolean ismax) {
 		expandedNodes = 0;
 		ACTION result = null;
-		double resultValue = Double.NEGATIVE_INFINITY;
+
 		PLAYER player = game.getPlayer(state);
-		for (ACTION action : game.getActions(state)) {
-			double value = minValue(game.getResult(state, action), player);
-			if (value > resultValue) {
-				result = action;
-				resultValue = value;
+		if(ismax){
+			double resultValue = Double.NEGATIVE_INFINITY;
+			for (ACTION action : game.getActions(state)) {
+				double value = minValue(game.getResult(state, action), player);
+				if (value > resultValue) {
+					result = action;
+					resultValue = value;
+				}
+			}
+		} else {
+			double resultValue = Double.POSITIVE_INFINITY;
+			for (ACTION action : game.getActions(state)) {
+				double value = maxValue(game.getResult(state, action), player);
+				if (value < resultValue) {
+					result = action;
+					resultValue = value;
+				}
 			}
 		}
 		return result;

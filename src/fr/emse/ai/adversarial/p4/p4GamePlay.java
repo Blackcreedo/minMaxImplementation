@@ -2,8 +2,8 @@ package fr.emse.ai.adversarial.p4;
 
 import fr.emse.ai.adversarial.AlphaBetaSearch;
 import fr.emse.ai.adversarial.IterativeDeepeningAlphaBetaSearch;
+import fr.emse.ai.adversarial.LimitedMinimaxSearch;
 import fr.emse.ai.adversarial.MinimaxSearch;
-import fr.emse.ai.adversarial.ttt.TttGame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ public class p4GamePlay {
     public static void main(String[] args) {
         p4Game game = new p4Game();
         MinimaxSearch<List<List<Integer>>, List<Integer>, Integer> minimaxSearch = MinimaxSearch.createFor(game);
+        LimitedMinimaxSearch<List<List<Integer>>, List<Integer>, Integer> limitedMinimaxSearch = LimitedMinimaxSearch.createFor(game, 6); // more depth is to long to have fun playing with
         AlphaBetaSearch<List<List<Integer>>, List<Integer>, Integer> alphabetaSearch = AlphaBetaSearch.createFor(game);
         IterativeDeepeningAlphaBetaSearch<List<List<Integer>>, List<Integer>, Integer> iterativeDeepeningAlphaBetaSearch = IterativeDeepeningAlphaBetaSearch.createFor(game, -1, 1, 10);
         List<List<Integer>> state = game.getInitialState();
@@ -37,21 +38,23 @@ public class p4GamePlay {
                 while (!actions.contains(action)) {
                     System.out.println("Human player, what is your action?");
                     action.clear();
-                    line = in.nextInt();
                     column = in.nextInt();
+                    line = game.getLine(state, column);
                     action.add(line);action.add(column);
                 }
             }
             else{
                 // machine turn
-                boolean ismax = playerChosen==0;  // replace playerChosen==0 by !playerChosen==0 if you want the AI to lose everytime
+                boolean ismax = playerChosen==0;  // replace playerChosen==0 by !playerChosen==0 if you want the AI to be dumb
                 System.out.println("Machine player, what is your action?");
                 //action = minimaxSearch.makeDecision(state, ismax); // Is to long to process
                 //System.out.println("Metrics for Minimax : " + minimaxSearch.getMetrics());
                 //action = alphabetaSearch.makeDecision(state, ismax); //same
                 //System.out.println("Metrics for AlphaBeta : " + alphabetaSearch.getMetrics());
-                action = iterativeDeepeningAlphaBetaSearch.makeDecision(state, ismax);
-                System.out.println("Metrics for IDAlphaBetaSearch : " + iterativeDeepeningAlphaBetaSearch.getMetrics());
+                //action = iterativeDeepeningAlphaBetaSearch.makeDecision(state, ismax);
+                //System.out.println("Metrics for IDAlphaBetaSearch : " + iterativeDeepeningAlphaBetaSearch.getMetrics());
+                action = limitedMinimaxSearch.makeDecision(state, ismax);
+                System.out.println("Metrics for LimitedMinimax : " + limitedMinimaxSearch.getMetrics());
             }
             System.out.println("Chosen action is " + action);
             state = game.getResult(state, action);

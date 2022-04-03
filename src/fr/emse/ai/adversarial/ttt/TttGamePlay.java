@@ -1,6 +1,7 @@
 package fr.emse.ai.adversarial.ttt;
 
 import fr.emse.ai.adversarial.AlphaBetaSearch;
+import fr.emse.ai.adversarial.LimitedMinimaxSearch;
 import fr.emse.ai.adversarial.MinimaxSearch;
 import fr.emse.ai.adversarial.IterativeDeepeningAlphaBetaSearch;
 
@@ -13,6 +14,7 @@ public class TttGamePlay {
     public static void main(String[] args) {
         TttGame game = new TttGame();
         MinimaxSearch<List<List<Integer>>, List<Integer>, Integer> minimaxSearch = MinimaxSearch.createFor(game);
+        LimitedMinimaxSearch<List<List<Integer>>, List<Integer>, Integer> limitedMinimaxSearch = LimitedMinimaxSearch.createFor(game, 10);
         AlphaBetaSearch<List<List<Integer>>, List<Integer>, Integer> alphabetaSearch = AlphaBetaSearch.createFor(game);
         IterativeDeepeningAlphaBetaSearch<List<List<Integer>>, List<Integer>, Integer> iterativeDeepeningAlphaBetaSearch = IterativeDeepeningAlphaBetaSearch.createFor(game, -1, 1, 10);
         List<List<Integer>> state = game.getInitialState();
@@ -49,8 +51,9 @@ public class TttGamePlay {
                 System.out.println("Metrics for Minimax : " + minimaxSearch.getMetrics());
                 alphabetaSearch.makeDecision(state, ismax);
                 System.out.println("Metrics for AlphaBeta : " + alphabetaSearch.getMetrics());
-                action = iterativeDeepeningAlphaBetaSearch.makeDecision(state, ismax);
-                System.out.println("Metrics for IDAlphaBetaSearch : " + iterativeDeepeningAlphaBetaSearch.getMetrics());
+                //action = iterativeDeepeningAlphaBetaSearch.makeDecision(state, ismax);
+                //System.out.println("Metrics for IDAlphaBetaSearch : " + iterativeDeepeningAlphaBetaSearch.getMetrics());
+                action = limitedMinimaxSearch.makeDecision(state, ismax);
             }
             System.out.println("Chosen action is " + action);
             state = game.getResult(state, action);

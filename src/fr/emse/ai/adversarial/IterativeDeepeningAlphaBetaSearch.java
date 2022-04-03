@@ -243,6 +243,7 @@ public class IterativeDeepeningAlphaBetaSearch<STATE, ACTION, PLAYER>
 			return game.getUtility(state, player);
 		} else {
 			maxDepthReached = true;
+			//return game.getUtility(state, player);
 			return (utilMin + utilMax) / 2;
 		}
 	}

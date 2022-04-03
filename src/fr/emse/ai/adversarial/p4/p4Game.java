@@ -61,6 +61,13 @@ public class p4Game implements Game<List<List<Integer>>, List<Integer>, Integer>
         return actions;
     }
 
+    public Integer getLine(List<List<Integer>> state, int column){
+        for (int i =6; i>=0; i--){
+            if (state.get(i).get(column) == -1) return i;
+        }
+        return -1;
+    }
+
     @Override
     public List<List<Integer>> getResult(List<List<Integer>> state, List<Integer> action) {
         // Returns the board that results from making move (i, j) on the board.
@@ -119,81 +126,105 @@ public class p4Game implements Game<List<List<Integer>>, List<Integer>, Integer>
 
     @Override
     public double getUtility(List<List<Integer>> state, Integer player) {
-
         player = winner(state);
         if (player==null) {
             double value = 0;
-            for (int i =0; i<7; i++){
-                for (int j =0; j<6; j++){
-                    int length = 0;
-                    int compareH = state.get(i).get(j);
-                    int compareV = state.get(j).get(i);
-                    if (compareH != -1){
-                        if (compareH==state.get(i).get(j+1)) {
-                            length=2;
-                            if(j!=5){
-                                if (compareH==state.get(i).get(j+2)) length=3;
+            for (int i =0; i<7; i++) {
+                for (int j = 0; j < 7; j++) {
+                    int countX=0;
+                    int countO=0;
+                    if(i+4<7) {
+                        // count X and O on the line
+                        for(int k=0; k<4;k++){
+                            if(state.get(i+k).get(j)==1) countX++;
+                            if(state.get(i+k).get(j)==0) countO++;
+                        }
+                        if(countO == 0) {
+                            if(countX==1) value +=1;
+                            if(countX==2) value +=3;
+                            if(countX==3) value +=10;
+                        }
+                        if(countX == 0) {
+                            if(countO==1) value -=1;
+                            if(countO==2) value -=3;
+                            if(countO==3) value -=10;
+                        }
+                        countX=0;
+                        countO=0;
+                        if(j+4<7){
+                            // count X and 0 on the diag 1
+                            for(int k=0; k<4;k++){
+                                if(state.get(i+k).get(j+k)==1) countX++;
+                                if(state.get(i+k).get(j+k)==0) countO++;
                             }
                         }
-                        if (compareH == 1) value += length*length;
-                        else value -= length*length;
                     }
-                    length = 0;
-                    if (compareV!=-1){
-                        if (compareV==state.get(j+1).get(i)){
-                            length=2;
-                            if(j!=5){
-                                if (compareV==state.get(j+2).get(i)) length=3;
-                            }
-                        }
-                        if (compareV == 1) value += length*length;
-                        else value -= length*length;
+                    if(countO == 0) {
+                        if(countX==1) value +=1;
+                        if(countX==2) value +=3;
+                        if(countX==3) value +=10;
                     }
-                    if (i<4){
-                        int compareD1 = state.get(i).get(j);
-                        int compareD2 = state.get(i).get(6-j);
-                        length = 0;
-                        if (compareD1 != -1){
-                            if (compareD1==state.get(i+1).get(j+1)){
-                                length=2;
-                                if(j!=5){
-                                    if (compareD1==state.get(i+2).get(j+2)) length=3;
-                                }
-                            }
-                            if (compareD1 == 1) value += length*length;
-                            else value -= length*length;
+                    if(countX == 0) {
+                        if(countO==1) value -=1;
+                        if(countO==2) value -=3;
+                        if(countO==3) value -=10;
+                    }
+                    countX=0;
+                    countO=0;
+                    if(j+4<7){
+                        // count X and O on the column
+                        for(int k=0; k<4;k++){
+                            if(state.get(i).get(j+k)==1) countX++;
+                            if(state.get(i).get(j+k)==0) countO++;
                         }
-                        length = 0;
-                        if (compareD2 != -1){
-                            if (compareD2==state.get(i+1).get(5-j)){
-                                length=2;
-                                if(j!=5){
-                                    if (compareD2==state.get(i+2).get(4-j)) length=3;
-                                }
+                        if(countO == 0) {
+                            if(countX==1) value +=1;
+                            if(countX==2) value +=3;
+                            if(countX==3) value +=10;
+                        }
+                        if(countX == 0) {
+                            if(countO==1) value -=1;
+                            if(countO==2) value -=3;
+                            if(countO==3) value -=10;
+                        }
+                        countX=0;
+                        countO=0;
+                        if(i-4>=0){
+                            // count X and 0 on the diag 2
+                            for(int k=0; k<4;k++){
+                                if(state.get(i-k).get(j+k)==1) countX++;
+                                if(state.get(i-k).get(j+k)==0) countO++;
                             }
-                            if (compareD2 == 1) value += length*length;
-                            else value -= length*length;
+                            if(countO == 0) {
+                                if(countX==1) value +=1;
+                                if(countX==2) value +=3;
+                                if(countX==3) value +=10;
+                            }
+                            if(countX == 0) {
+                                if(countO==1) value -=1;
+                                if(countO==2) value -=3;
+                                if(countO==3) value -=10;
+                            }
                         }
                     }
                 }
             }
             return value;
+        } else {
+            if (player == 1) return Double.POSITIVE_INFINITY;
+            return Double.NEGATIVE_INFINITY;
         }
-
-        if (player == 1) return Double.POSITIVE_INFINITY;
-        return Double.NEGATIVE_INFINITY;
     }
 
 
     public void printState(List<List<Integer>> state){
         for(List<Integer> lineI: state){
-            System.out.print("|");
             for (Integer e: lineI){
-                if(e==1) System.out.print("X|");
-                else if(e==0) System.out.print("O|");
-                else System.out.print(" |");
+                if(e==1) System.out.print("X ");
+                else if(e==0) System.out.print("O ");
+                else System.out.print("_ ");
             }
-            System.out.println("\n-----------------------------");
+            System.out.println("");
         }
     }
 }

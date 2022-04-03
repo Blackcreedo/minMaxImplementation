@@ -114,13 +114,12 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
 
     public void printState(List<List<Integer>> state){
         for(List<Integer> lineI: state){
-            System.out.print("|");
             for (Integer e: lineI){
-                if(e==1) System.out.print("X|");
-                else if(e==0) System.out.print("O|");
-                else System.out.print(" |");
+                if(e==1) System.out.print("X ");
+                else if(e==0) System.out.print("O ");
+                else System.out.print("_ ");
             }
-            System.out.println("\n---------");
+            System.out.println("");
         }
     }
 }

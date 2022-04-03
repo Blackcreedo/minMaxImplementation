@@ -11,13 +11,13 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
     public final static List<List<Integer>> initialState = new ArrayList<List<Integer>>();
 
     public TttGame(){
-        ArrayList<Integer> line1 = new ArrayList<Integer>();
-        line1.add(-1);line1.add(-1);line1.add(-1);
-        ArrayList<Integer> line2 = new ArrayList<Integer>();
-        line2.add(-1);line2.add(-1);line2.add(-1);
-        ArrayList<Integer> line3 = new ArrayList<Integer>();
-        line3.add(-1);line3.add(-1);line3.add(-1);
-        initialState.add(line1);initialState.add(line2);initialState.add(line3);
+        for(int i = 0; i<3; i++){
+            ArrayList<Integer> line = new ArrayList<Integer>();
+            for(int j = 0; j<3; j++){
+                line.add(-1);
+            }
+            initialState.add(line);
+        }
     }
 
 
@@ -69,9 +69,8 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
 
         // make a copy of the list
         ArrayList<List<Integer>> newState = new ArrayList<List<Integer>>();
-        for (int i =0; i<3;i++){
+        for (List<Integer> lineOld: state){
             ArrayList<Integer> lineNew = new ArrayList<Integer>();
-            ArrayList<Integer> lineOld = (ArrayList)state.get(i);
             for(int e: lineOld){
                 lineNew.add(e);
             }
@@ -114,9 +113,8 @@ public class TttGame implements Game<List<List<Integer>>, List<Integer>, Integer
     }
 
     public void printState(List<List<Integer>> state){
-        for(int i=0;i<3;i++){
+        for(List<Integer> lineI: state){
             System.out.print("|");
-            ArrayList<Integer> lineI = (ArrayList)state.get(i);
             for (Integer e: lineI){
                 if(e==1) System.out.print("X|");
                 else if(e==0) System.out.print("O|");
